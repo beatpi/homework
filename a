@@ -1,0 +1,132 @@
+package main
+
+import (
+	"fmt"
+	"unsafe"
+)
+
+func main() {
+
+	//initialization()
+	//size()
+	//accessing()
+	//copying()
+	nested()
+}
+
+func initialization() {
+	uninitialized := [5]int{}
+	var uninitialized2 [5]int
+
+	fmt.Println("uninitialized:", uninitialized)
+	fmt.Println("uninitialized2:", uninitialized2)
+
+	regular := [5]int{1, 2, 3, 4, 5}
+	fmt.Println("regular:", regular)
+
+	const size = 5
+	constantSize := [size]int{1, 2, 3, 4, 5}
+	fmt.Println("constantSize:", constantSize)
+
+	partial := [5]int{1, 2, 3} // size is 5, last 2 elements are 0
+	fmt.Println("partial:", partial)
+
+	automaticSize := [...]int{1, 2, 3, 4, 5}
+	fmt.Println("automaticSize:", automaticSize)
+
+	sparse := [10]int{5: 10, 9: 30}
+	fmt.Println("sparse:", sparse)
+}
+
+func size() {
+	var arr [5]int
+	fmt.Println("len:", len(arr))
+
+	// element size is 8 bytes
+	fmt.Println("element size: ", unsafe.Sizeof(arr[0]))
+	// total size is 8 * 5 = 40 bytes
+	fmt.Println("total size: ", unsafe.Sizeof(arr))
+}
+
+func accessing() {
+	var arr [5]int
+	fmt.Println("initial:", arr)
+	fmt.Println("len:", len(arr))
+
+	arr[0], arr[4] = 1, 5
+	fmt.Println("set:", arr)
+
+	a, b := arr[0], arr[1]
+	fmt.Printf("a: %d, b: %d\n", a, b)
+
+}
+
+func copying() {
+	// assignment copies the array
+	a := [5]int{1, 2, 3, 4, 5}
+	b := a
+
+	fmt.Println("a:", a)
+	fmt.Println("b:", b)
+
+	// modifying b does not modify a
+	b[0] = 10
+	fmt.Println("b[0] = 10")
+	fmt.Println("a:", a)
+	fmt.Println("b:", b)
+
+	a[1] = 20
+	fmt.Println("a[1] = 20")
+	fmt.Println("a:", a)
+	fmt.Println("b:", b)
+
+	// same applies to ints, floats and other types
+}
+
+func comparing() {
+	/* extra about comparing in general
+	applicable to ordered types (int, float, string, etc.):
+	> - greater than
+	< - less than
+	>= - greater than or equal to
+	<= - less than or equal to
+
+	applicable to comparable types (ordered types + bool + arrays and other composite comparable types):
+	== - equal to
+	!= - not equal to
+	*/
+
+	a := [5]int{1, 2, 3, 4, 5}
+	b := [5]int{1, 2, 3, 4, 5}
+	c := [5]int{1, 2, 3, 4, 6}
+
+	fmt.Println("a == b:", a == b)
+	fmt.Println("a == c:", a == c)
+
+	//d := [6]int{1, 2, 3, 4, 5, 6}
+	//c == d // Invalid operation: c == d (mismatched types [5]int and [6]int)
+}
+
+func compatibility() {
+	// arrays are size + type specific. Any two arrays of different size or type are not compatible.
+
+	var a [5]int
+	var b [10]int
+
+	//a = b // Invalid operation: cannot use b (type [10]int) as type [5]int in assignment
+	//b = a // Invalid operation: cannot use a (type [5]int) as type [10]int in assignment
+
+	_, _ = a, b
+}
+
+func nested() {
+	// arrays can be nested
+	var a [5][5]int // every array element is an array of 5 ints itself
+	fmt.Println("a:", a)
+
+	a[0][0] = 1
+	a[4][4] = 25
+
+	fmt.Println("a:", a)
+	fmt.Println("size of a:", unsafe.Sizeof(a)) // 5 * 5 * 8 (int64) = 200 bytes
+}
